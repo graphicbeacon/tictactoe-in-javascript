@@ -4,6 +4,8 @@ window.tictactoe = {
 
 	tiles: $('.ttt-tiles'),
 
+	currentActiveTileIndex: 0,
+
 	resetButton: $('.ttt-stage-reset-button'),
 
 	isWinner: false,
@@ -27,11 +29,17 @@ window.tictactoe = {
 			});
 		});
 
-		// Set game reset event
-		this.createGameResetEvent();
+		// Create game reset event
+		this.initResetEvent();
 
-		// Capture tab events
-		this.captureTabEvents();
+		// Cancel tab key events
+		this.cancelTabKeyEvents();
+
+		// Initialise arrow keys for highlighting tiles
+		this.initArrowKeyEvents();
+
+		// Initialize mouse events
+		this.initMouseEvents();
 	},
 
 	activateClickedTile: function (clickedTile) {
@@ -133,7 +141,7 @@ window.tictactoe = {
 
 	},
 
-	createGameResetEvent: function() {
+	initResetEvent: function() {
 
 		var self = this;
 
@@ -148,6 +156,8 @@ window.tictactoe = {
 				tile.disabled = '';
 
 			});
+				
+			self.highlightSelectedTile(0);
 
 			// Reset winner to false
 			self.isWinner = false;
@@ -159,19 +169,104 @@ window.tictactoe = {
 
 	},
 
-	captureTabEvents: function () {
-
-		this.tiles.get(0).focus();
+	cancelTabKeyEvents: function () {
 
 		$(document).on('keydown', function(keydownEvent){
 
 			var characterCode = (typeof keydownEvent.which == 'undefined') ? keydownEvent.keyCode : keydownEvent.which;
 
 			if(characterCode === 9) { // If its tabbing key
+
 				keydownEvent.preventDefault();
+
 			}
 
 		});
+	},
+
+	initArrowKeyEvents: function() {
+
+		var self = this;
+
+		// Highlight first tile by default
+		this.highlightSelectedTile(this.currentActiveTileIndex);;
+
+
+		$(document).on('keydown', function(keydownEvent) {
+
+			var characterCode = (typeof keydownEvent.which == 'undefined') ? keydownEvent.keyCode : keydownEvent.which;
+
+			switch(characterCode) {
+
+				case 32:
+
+					self.activateClickedTile(self.tiles.get(self.currentActiveTileIndex));
+
+					break;
+
+				case 37: // Left arrow key
+					
+					if (self.currentActiveTileIndex === 0) return; // if first element is highlighted dont do anything
+
+					self.highlightSelectedTile(self.currentActiveTileIndex-=1);
+
+					break;
+
+				case 39: // right arrow key
+
+					if (self.currentActiveTileIndex === self.tiles.length - 1) return; // If last element is highlighted don't do anything
+
+					self.highlightSelectedTile(self.currentActiveTileIndex+=1);
+
+					break;
+
+				case 38: // up arrow key
+
+					if (self.currentActiveTileIndex < 3) return; // if on first row then don't do anything
+
+					self.highlightSelectedTile(self.currentActiveTileIndex-=3); // jump backward 3 times
+
+					break;
+
+				case 40: // down arrow key
+
+					if (self.currentActiveTileIndex > 5) return; // if on third row then fon't do anything
+
+					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
+
+			}
+
+		});
+
+	},
+
+	initMouseEvents: function () {
+
+		var self = this;
+		var currentActiveTileIndex = this.currentActiveTileIndex;
+
+		this.tiles.each(function(index, tile) {
+
+			var $tile = $(tile);
+
+			$tile.on('mouseover mouseenter', function(hoverEventObject) {
+
+				self.highlightSelectedTile(index);
+				
+			});
+
+		});
+	},
+
+
+	highlightSelectedTile: function(currentActiveTileIndex) {
+
+		// Set active tile state
+		this.currentActiveTileIndex = currentActiveTileIndex;
+
+		// highlights the selected tile
+		this.tiles.removeClass('active').eq(currentActiveTileIndex).addClass('active');
+
 	}
 
 };
