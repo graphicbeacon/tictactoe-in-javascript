@@ -1,17 +1,21 @@
-window.tictactoe = {
+(function() {
 
-	player: 1,
+	function TicTacToe (config) {
+		this.player = 1,
+		this.tiles = config.tiles,
+		this.currentActiveTileIndex = 0,
+		this.resetButton = config.resetButton,
+		this.isWinner = false;
 
-	tiles: $('.ttt-tiles'),
+		this.gamepadsConnected = false;
+		this.gamepads = [];
 
-	currentActiveTileIndex: 0,
+		this.init();
+	};
 
-	resetButton: $('.ttt-stage-reset-button'),
 
-	isWinner: false,
+	TicTacToe.prototype.init = function() {
 
-	init: function () {
-			
 		var self = this;
 
 		// Loops over all clickable tiles
@@ -40,9 +44,14 @@ window.tictactoe = {
 
 		// Initialize mouse events
 		this.initMouseEvents();
-	},
 
-	activateClickedTile: function (clickedTile) {
+		this.initGamepadEvents();
+	};
+
+
+	TicTacToe.prototype.activateClickedTile = function (clickedTile) {
+
+		if ($(clickedTile).is(':disabled')) return;
 
 		if (this.player === 1) {
 
@@ -76,9 +85,10 @@ window.tictactoe = {
 
 		this.checkForDraw();
 
-	},
+	};
 
-	checkWinner: function (playerToken) {
+
+	TicTacToe.prototype.checkWinner = function (playerToken) {
 
 		var self = this;
 
@@ -91,24 +101,26 @@ window.tictactoe = {
 				self.tiles.get(winningCombination[1] - 1).value == playerToken &&
 				self.tiles.get(winningCombination[2] - 1).value == playerToken ) {
 
-				alert('the winner is player ' + self.player);
-
-				self.disableAllTiles();
+				console.log('the winner is player ' + self.player);
 
 				// Set winner to true
 				self.isWinner = true;
 
-				console.log('Winning combination', winningCombination[0], winningCombination[1], winningCombination[2]);
+				self.disableAllTiles();
+
+
+				//console.log('Winning combination', winningCombination[0], winningCombination[1], winningCombination[2]);
 
 			}
 
 
 		});
 
-	},
+	};
 
-	checkForDraw: function() {
 
+	TicTacToe.prototype.checkForDraw = function (first_argument) {
+		
 		var filledTiles = 0;
 
 		// Loops over tiles and checked if they are all filled
@@ -123,14 +135,16 @@ window.tictactoe = {
 
 			console.log('draw');
 		};
-	},
 
-	disableAllTiles: function () {
+	};
+
+
+	TicTacToe.prototype.disableAllTiles = function () {
 
 		// Disable all tiles after a player wins
 		// to prevent further interaction with tiles
 		// until game is reset of course :)
-		this.tiles.each(function(index, tile) {
+		this.tiles.each(function (index, tile) {
 
 			if(tile.value) return; // Ignore tiles already clicked
 			
@@ -139,14 +153,15 @@ window.tictactoe = {
 
 		});
 
-	},
+	};
 
-	initResetEvent: function() {
+
+	TicTacToe.prototype.initResetEvent = function () {
 
 		var self = this;
 
 		// Reset Button Functionality
-		self.resetButton.on('click', function() {
+		self.resetButton.on('click', function () {
 
 			// Reset state of all tiles
 			// // Start a new game
@@ -167,9 +182,10 @@ window.tictactoe = {
 
 		});
 
-	},
+	};
 
-	cancelTabKeyEvents: function () {
+
+	TicTacToe.prototype.cancelTabKeyEvents = function () {
 
 		$(document).on('keydown', function(keydownEvent){
 
@@ -182,9 +198,10 @@ window.tictactoe = {
 			}
 
 		});
-	},
+	};
 
-	initArrowKeyEvents: function() {
+
+	TicTacToe.prototype.initArrowKeyEvents = function () {
 
 		var self = this;
 
@@ -234,13 +251,15 @@ window.tictactoe = {
 
 					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
 
+					break;
 			}
 
 		});
 
-	},
+	};
 
-	initMouseEvents: function () {
+
+	TicTacToe.prototype.initMouseEvents = function () {
 
 		var self = this;
 		var currentActiveTileIndex = this.currentActiveTileIndex;
@@ -256,10 +275,10 @@ window.tictactoe = {
 			});
 
 		});
-	},
+	};
 
 
-	highlightSelectedTile: function(currentActiveTileIndex) {
+	TicTacToe.prototype.highlightSelectedTile = function (currentActiveTileIndex) {
 
 		// Set active tile state
 		this.currentActiveTileIndex = currentActiveTileIndex;
@@ -267,9 +286,153 @@ window.tictactoe = {
 		// highlights the selected tile
 		this.tiles.removeClass('active').eq(currentActiveTileIndex).addClass('active');
 
-	}
+	};
 
-};
 
-// Initialize game
-tictactoe.init();
+	TicTacToe.prototype.initGamepadEvents = function () {
+
+		var self = this;
+
+		// Listen for connected gamepad
+		$(window).on('gamepadconnected', function(gamepadEvent) {
+
+			self.gamepadsConnected = true;
+
+			console.log(navigator.getGamepads());
+			self.mapGamepadControls();
+
+		}).on('gamepaddisconnected', function() {
+
+
+			if (!navigator.getGamepads()[0]) {
+
+				self.gamepadsConnected = false;
+
+			}
+
+		});
+
+
+		// Polyfill for chrome
+		var checkForConnectedGamepads = window.setInterval(function() {
+
+			if(navigator.getGamepads()[0]) {
+
+                if(!self.gamepadsConnected) $(window).trigger("gamepadconnected");
+
+                window.clearInterval(checkForConnectedGamepads);
+            }
+
+		}, 500);
+	};
+
+
+	TicTacToe.prototype.mapGamepadControls = function() {
+		
+		var self = this;
+
+		var requestAnimationFrame = window.mozRequestAnimationFrame ||
+								window.webkitRequestAnimationFrame ||
+								window.requestAnimationFrame;
+
+
+		function checkGamepadEvents (timestamp) {
+
+			var gpadButtons = navigator.getGamepads()[0].buttons;
+
+			
+		    // for(var i=0;i<gpadButtons.length;i++) {
+	     //          var html = "Button "+(i+1)+": ";
+	     //          if(gpadButtons[i].pressed) console.log(html, ' pressed');
+      //       }
+    		
+
+    		// Listening for directional pad presses
+   			if (gpadButtons[12].pressed) { // up button
+
+				if (self.currentActiveTileIndex < 3) {
+
+					self.highlightSelectedTile(self.currentActiveTileIndex);
+
+				} else {
+
+					self.highlightSelectedTile(self.currentActiveTileIndex-=3); // jump backward 3 times
+
+				}
+
+				//console.log('up button pressed');
+
+   			} else if (gpadButtons[13].pressed) { // down button
+
+				if (self.currentActiveTileIndex > 5) {// if on third row then fon't do anything
+
+					self.highlightSelectedTile(self.currentActiveTileIndex);
+
+				} else {
+
+					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
+
+				}
+
+				//console.log('down button pressed');
+
+
+   			} else if (gpadButtons[14].pressed) { // left button
+   				
+   				if (self.currentActiveTileIndex === 0) {
+
+   					self.highlightSelectedTile(0);
+   					
+   				} else {
+
+   					self.highlightSelectedTile(self.currentActiveTileIndex-=1);
+
+   				}
+
+				//console.log('left button pressed');
+
+   			} else if (gpadButtons[15].pressed) { // right button
+
+				if (self.currentActiveTileIndex === self.tiles.length - 1) {
+					
+   					self.highlightSelectedTile(self.tiles.length - 1);
+					
+				} else {
+
+					self.highlightSelectedTile(self.currentActiveTileIndex+=1);
+
+				}
+
+				//console.log('right button pressed');
+   			}
+
+
+   			// Listening for X , O, [], /\ button presses
+   			if (gpadButtons[0].pressed || 
+   				gpadButtons[1].pressed || 
+   				gpadButtons[2].pressed || 
+   				gpadButtons[3].pressed) { 
+
+   				self.activateClickedTile(self.tiles.get(self.currentActiveTileIndex));
+
+   			}
+
+
+            setTimeout(function() {
+	            requestAnimationFrame(checkGamepadEvents);
+	            //checkGamepadEvents();
+	            //console.log('running');
+			}, 100);
+		};
+
+
+		requestAnimationFrame(checkGamepadEvents);
+
+	};
+
+	// Initialize app
+	new TicTacToe({
+		tiles: $('.ttt-tiles'),
+		resetButton: $('.ttt-stage-reset-button')
+	});
+}());
