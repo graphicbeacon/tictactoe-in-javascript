@@ -5,10 +5,10 @@ body {
 .ttt-stage {
 	display: flex;
 	flex-wrap: wrap;
-	height: 600px;
+	height: 400px;
 	justify-content: space-between;
 	margin: 0 auto;
-	width: 600px;
+	width: 400px;
 }
 
 .ttt-tiles {
@@ -34,5 +34,5 @@ body {
 	display: block;
 	font-size: 30px;
 	margin: 0 auto;
-	width: 600px;
+	width: 400px;
 }

@@ -298,7 +298,10 @@
 
 			self.gamepadsConnected = true;
 
-			console.log(navigator.getGamepads());
+			$.each(navigator.getGamepads(), function(index, gamepad) {
+				self.gamepads.push(gamepad);
+			});
+
 			self.mapGamepadControls();
 
 		}).on('gamepaddisconnected', function() {
