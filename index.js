@@ -36,9 +36,6 @@
 		// Create game reset event
 		this.initResetEvent();
 
-		// Cancel tab key events
-		this.cancelTabKeyEvents();
-
 		// Initialise arrow keys for highlighting tiles
 		this.initArrowKeyEvents();
 
@@ -182,22 +179,6 @@
 
 		});
 
-	};
-
-
-	TicTacToe.prototype.cancelTabKeyEvents = function () {
-
-		$(document).on('keydown', function(keydownEvent){
-
-			var characterCode = (typeof keydownEvent.which == 'undefined') ? keydownEvent.keyCode : keydownEvent.which;
-
-			if(characterCode === 9) { // If its tabbing key
-
-				keydownEvent.preventDefault();
-
-			}
-
-		});
 	};
 
 
