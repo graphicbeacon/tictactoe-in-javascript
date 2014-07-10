@@ -4,11 +4,9 @@
 		this.player = 1,
 		this.tiles = config.tiles,
 		this.currentActiveTileIndex = 0,
-		this.resetButton = config.resetButton,
 		this.isWinner = false;
 
 		this.gamepadsConnected = false;
-		this.gamepads = [];
 
 		this.init();
 	};
@@ -33,15 +31,13 @@
 			});
 		});
 
-		// Create game reset event
-		this.initResetEvent();
-
 		// Initialise arrow keys for highlighting tiles
-		this.initArrowKeyEvents();
+		this.initKeyboardInputEvents();
 
 		// Initialize mouse events
 		this.initMouseEvents();
 
+		// Listen for connected gamepads and set controller support
 		this.initGamepadEvents();
 	};
 
@@ -98,6 +94,8 @@
 				self.tiles.get(winningCombination[1] - 1).value == playerToken &&
 				self.tiles.get(winningCombination[2] - 1).value == playerToken ) {
 
+				alert('the winner is player ' + self.player);
+
 				console.log('the winner is player ' + self.player);
 
 				// Set winner to true
@@ -153,42 +151,34 @@
 	};
 
 
-	TicTacToe.prototype.initResetEvent = function () {
+	TicTacToe.prototype.resetGame = function () {
 
-		var self = this;
+		// Reset state of all tiles
+		// Start a new game
+		this.tiles.each(function(index, tile) {
 
-		// Reset Button Functionality
-		self.resetButton.on('click', function () {
-
-			// Reset state of all tiles
-			// // Start a new game
-			self.tiles.each(function(index, tile) {
-
-				tile.value = '';
-				tile.disabled = '';
-
-			});
-				
-			self.highlightSelectedTile(0);
-
-			// Reset winner to false
-			self.isWinner = false;
-
-			// Re-enable to ensure that player 1(X) always goes first
-			//self.player = 1;
+			tile.value = '';
+			tile.disabled = '';
 
 		});
+			
+		this.highlightSelectedTile(0);
 
+		// Reset winner to false
+		this.isWinner = false;
+
+		// Re-enable to ensure that player 1(X) always goes first
+		// this.player = 1;
+		// 
 	};
 
 
-	TicTacToe.prototype.initArrowKeyEvents = function () {
+	TicTacToe.prototype.initKeyboardInputEvents = function () {
 
 		var self = this;
 
 		// Highlight first tile by default
 		this.highlightSelectedTile(this.currentActiveTileIndex);;
-
 
 		$(document).on('keydown', function(keydownEvent) {
 
@@ -233,6 +223,19 @@
 					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
 
 					break;
+
+				case 82: // R key
+
+					self.resetGame();
+
+					break;
+
+				case 9: // tab key
+
+					keydownEvent.preventDefault();
+
+					break;
+
 			}
 
 		});
@@ -280,10 +283,13 @@
 			self.gamepadsConnected = true;
 
 			$.each(navigator.getGamepads(), function(index, gamepad) {
-				self.gamepads.push(gamepad);
+				
+				if(typeof gamepad !== 'object') return;
+
+				self.mapGamepadControls(parseInt(index,10));
+
 			});
 
-			self.mapGamepadControls();
 
 		}).on('gamepaddisconnected', function() {
 
@@ -311,7 +317,7 @@
 	};
 
 
-	TicTacToe.prototype.mapGamepadControls = function() {
+	TicTacToe.prototype.mapGamepadControls = function(gamepadIndex) {
 		
 		var self = this;
 
@@ -322,90 +328,47 @@
 
 		function checkGamepadEvents (timestamp) {
 
-			var gpadButtons = navigator.getGamepads()[0].buttons;
+			var gpadButtons = navigator.getGamepads()[gamepadIndex].buttons;
 
 			
 		    // for(var i=0;i<gpadButtons.length;i++) {
-	     //          var html = "Button "+(i+1)+": ";
-	     //          if(gpadButtons[i].pressed) console.log(html, ' pressed');
-      //       }
+	     	//     var html = "Button "+(i+1)+": ";
+	     	//    if(gpadButtons[i].pressed) console.log(html, ' pressed');
+      		// }
     		
 
-    		// Listening for directional pad presses
-   			if (gpadButtons[12].pressed) { // up button
+      		if (self.player === gamepadIndex+1) {
 
-				if (self.currentActiveTileIndex < 3) {
-
-					self.highlightSelectedTile(self.currentActiveTileIndex);
-
-				} else {
+	    		// Listening for directional pad presses
+	   			if (gpadButtons[12].pressed && self.currentActiveTileIndex >= 3) { // up button
 
 					self.highlightSelectedTile(self.currentActiveTileIndex-=3); // jump backward 3 times
 
-				}
-
-				//console.log('up button pressed');
-
-   			} else if (gpadButtons[13].pressed) { // down button
-
-				if (self.currentActiveTileIndex > 5) {// if on third row then fon't do anything
-
-					self.highlightSelectedTile(self.currentActiveTileIndex);
-
-				} else {
+	   			} else if (gpadButtons[13].pressed && self.currentActiveTileIndex <= 5) {// down button and if not on third row
 
 					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
 
-				}
+	   			} else if (gpadButtons[14].pressed && self.currentActiveTileIndex !== 0) { // left button
 
-				//console.log('down button pressed');
+	   				self.highlightSelectedTile(self.currentActiveTileIndex-=1);
 
-
-   			} else if (gpadButtons[14].pressed) { // left button
-   				
-   				if (self.currentActiveTileIndex === 0) {
-
-   					self.highlightSelectedTile(0);
-   					
-   				} else {
-
-   					self.highlightSelectedTile(self.currentActiveTileIndex-=1);
-
-   				}
-
-				//console.log('left button pressed');
-
-   			} else if (gpadButtons[15].pressed) { // right button
-
-				if (self.currentActiveTileIndex === self.tiles.length - 1) {
-					
-   					self.highlightSelectedTile(self.tiles.length - 1);
-					
-				} else {
+	   			} else if (gpadButtons[15].pressed && self.currentActiveTileIndex !== self.tiles.length - 1) { // right button
 
 					self.highlightSelectedTile(self.currentActiveTileIndex+=1);
 
-				}
+	   			}
 
-				//console.log('right button pressed');
+	   			// Listening for X , O, [], /\ button presses
+	   			if (gpadButtons[0].pressed || gpadButtons[1].pressed || 
+	   				gpadButtons[2].pressed || gpadButtons[3].pressed) { 
+
+	   				self.activateClickedTile(self.tiles.get(self.currentActiveTileIndex));
+
+	   			}
    			}
-
-
-   			// Listening for X , O, [], /\ button presses
-   			if (gpadButtons[0].pressed || 
-   				gpadButtons[1].pressed || 
-   				gpadButtons[2].pressed || 
-   				gpadButtons[3].pressed) { 
-
-   				self.activateClickedTile(self.tiles.get(self.currentActiveTileIndex));
-
-   			}
-
 
             setTimeout(function() {
 	            requestAnimationFrame(checkGamepadEvents);
-	            //checkGamepadEvents();
-	            //console.log('running');
 			}, 100);
 		};
 
@@ -416,7 +379,6 @@
 
 	// Initialize app
 	new TicTacToe({
-		tiles: $('.ttt-tiles'),
-		resetButton: $('.ttt-stage-reset-button')
+		tiles: $('.ttt-tiles')
 	});
 }());

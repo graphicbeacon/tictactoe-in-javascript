@@ -27,12 +27,16 @@ body {
 	background: gold;
 }
 
-.ttt-stage-reset-button {
+.ttt-controls {
 	background: #FF851B;
-	border: 0 none;
 	color: white;
-	display: block;
-	font-size: 30px;
-	margin: 0 auto;
-	width: 400px;
+	left: 10px;
+	padding: 10px;
+	position: absolute;
+	top: 10px;
+	width: 200px;
+}
+
+.ttt-controls  h4 {
+	margin-top: 0;
 }
