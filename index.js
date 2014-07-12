@@ -328,31 +328,38 @@
 
 		function checkGamepadEvents (timestamp) {
 
-			var gpadButtons = navigator.getGamepads()[gamepadIndex].buttons;
-
+			var gpad = navigator.getGamepads()[gamepadIndex];
+			var gpadButtons = gpad.buttons;
+			var gpadAxes = gpad.axes;
 			
+			//console.log(navigator.getGamepads()[0].axes[1]);
+
 		    // for(var i=0;i<gpadButtons.length;i++) {
-	     	//     var html = "Button "+(i+1)+": ";
-	     	//    if(gpadButtons[i].pressed) console.log(html, ' pressed');
-      		// }
+	     // 	    var html = "Button "+(i+1)+": ";
+	     // 	    if(gpadButtons[i].pressed) console.log(html, ' pressed');
+      // 		}
     		
+		    // for(var i=0;i<gpadAxes.length;i++) {
+	     // 	    if(gpadAxes[i] === 1 || gpadAxes[i] === -1) 
+	     // 	    	console.log(gpadAxes[i]);
+      // 		}
 
       		if (self.player === gamepadIndex+1) {
 
 	    		// Listening for directional pad presses
-	   			if (gpadButtons[12].pressed && self.currentActiveTileIndex >= 3) { // up button
+	   			if ((gpadAxes[1] === -1 && gpadAxes[0] < 1) && self.currentActiveTileIndex >= 3) { // up button
 
 					self.highlightSelectedTile(self.currentActiveTileIndex-=3); // jump backward 3 times
 
-	   			} else if (gpadButtons[13].pressed && self.currentActiveTileIndex <= 5) {// down button and if not on third row
+	   			} else if ((gpadAxes[1] === 1 && gpadAxes[0] < 1) && self.currentActiveTileIndex <= 5) {// down button and if not on third row
 
 					self.highlightSelectedTile(self.currentActiveTileIndex+=3); // jump forward 3 times
 
-	   			} else if (gpadButtons[14].pressed && self.currentActiveTileIndex !== 0) { // left button
+	   			} else if ((gpadAxes[0] === -1 && gpadAxes[1] < 1) && self.currentActiveTileIndex !== 0) { // left button
 
 	   				self.highlightSelectedTile(self.currentActiveTileIndex-=1);
 
-	   			} else if (gpadButtons[15].pressed && self.currentActiveTileIndex !== self.tiles.length - 1) { // right button
+	   			} else if ((gpadAxes[0] === 1 && gpadAxes[1] < 1) && self.currentActiveTileIndex !== self.tiles.length - 1) { // right button
 
 					self.highlightSelectedTile(self.currentActiveTileIndex+=1);
 
@@ -360,7 +367,7 @@
 
 	   			// Listening for X , O, [], /\ button presses
 	   			if (gpadButtons[0].pressed || gpadButtons[1].pressed || 
-	   				gpadButtons[2].pressed || gpadButtons[3].pressed) { 
+	   				gpadButtons[2].pressed || gpadButtons[3].pressed || gpadButtons[7].pressed) { 
 
 	   				self.activateClickedTile(self.tiles.get(self.currentActiveTileIndex));
 
