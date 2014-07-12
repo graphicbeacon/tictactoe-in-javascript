@@ -2,7 +2,7 @@ body {
 	background-color: #85144B;
 }
 
-.ttt-stage {
+.board {
 	display: flex;
 	flex-wrap: wrap;
 	height: 400px;
@@ -11,9 +11,9 @@ body {
 	width: 400px;
 }
 
-.ttt-tiles {
+.board__cell {
 	background-color: #FF4136;
-	bordeR: 0 none;
+	border: 0 none;
 	box-sizing: border-box;
 	color: white;
 	font-size: 70px;
@@ -23,7 +23,7 @@ body {
 	-webkit-appearance: none;
 }
 
-.ttt-tiles.active {
+.board__cell--highlighted {
 	background: gold;
 }
 
