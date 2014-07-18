@@ -31,10 +31,8 @@ describe("Game", function() {
 		var player2 = game.players[1];
 
 		game.updateGameState(0, player1.token);
-		game.updateGameState(4, player2.token);
-		game.updateGameState(1, player1.token);
-		game.updateGameState(5, player2.token);
-		game.updateGameState(2, player1.token);
+		game.updateGameState(4, player1.token);
+		game.updateGameState(8, player1.token);
 
 		expect(game.winner).toBe(true);
 		expect(player1.numberOfWins).toBe(1);
