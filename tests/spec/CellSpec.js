@@ -21,12 +21,6 @@ describe("Cell", function() {
 	});
 
 
-	it("Sets the correct row and column", function(){
-		expect(cell._ROW).toEqual(0);
-		expect(cell._COLUMN).toEqual(0);
-	});
-
-
 	it("Paints the cell and keeps it final", function(){
 		cell.paint('X');
 		cell.paint('O');
