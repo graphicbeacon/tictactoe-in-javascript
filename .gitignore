@@ -1,1 +1,23 @@
-# Created by .ignore support plugin (hsz.mobi)
+###
+.idea
+bower_components
+
+### Vim template
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+### SublimeText template
+# cache files for sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# workspace files are user-specific
+*.sublime-workspace
+
+# sftp configuration file
+sftp-config.json

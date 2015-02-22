@@ -1,0 +1,22 @@
+{
+  "name": "tictactoe",
+  "version": "0.0.1",
+  "authors": [
+    "Jermaine Oppong <jeropp00@gmail.com>"
+  ],
+  "description": "A simple tictactoe game written in javascript with SRPs in mind.",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "http://www.graphicbeacon.com",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jasmine": "~2.2.1"
+  }
+}
