@@ -2,6 +2,18 @@ body {
 	background-color: #85144B;
 }
 
+#Controls {
+    background: #FF851B;
+    color: white;
+    font-family: "Lucida Grande", "Helvetica Nueue", Arial, sans-serif;
+    font-size: 14px;
+    left: 10px;
+    padding: 10px;
+    position: absolute;
+    top: 10px;
+    width: 200px;
+}
+
 .board {
 	display: flex;
 	flex-wrap: wrap;
@@ -25,18 +37,4 @@ body {
 
 .board__cell--highlighted {
 	background: gold;
-}
-
-.ttt-controls {
-	background: #FF851B;
-	color: white;
-	left: 10px;
-	padding: 10px;
-	position: absolute;
-	top: 10px;
-	width: 200px;
-}
-
-.ttt-controls  h4 {
-	margin-top: 0;
 }

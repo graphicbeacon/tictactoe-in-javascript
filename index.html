@@ -6,9 +6,10 @@
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
+
+    <div id="Stage"></div>
 	
-	
-	<div class="ttt-controls">
+	<div id="Controls">
 		<h4>Game Controls</h4>	
 		<ul>
 			<li>Arrow keys - Move Up/Down/Left/Right</li>
@@ -17,16 +18,15 @@
 		</ul>
 	</div>
 
-	<script src="lib/js/cell.js"></script>
-	<script src="lib/js/board.js"></script>
-	<script src="lib/js/player.js"></script>
-	<script src="lib/js/joypad.js"></script>
-	<script src="lib/js/game.js"></script>
+	<script src="lib/cell.js"></script>
+	<script src="lib/board.js"></script>
+	<script src="lib/player.js"></script>
+	<script src="lib/game.js"></script>
 	<script>	
 		//////////////////////////////
 		// Start New Game
 		//////////////////////////////
-		new Game().start();
+		new Game('#Stage').start();
 	</script>
 </body>
 </html>

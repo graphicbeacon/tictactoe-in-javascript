@@ -5,7 +5,7 @@ beforeEach(function () {
         compare: function (actual, expected) {
 
           return {
-            pass: actual.indexOf(expected) >= 0;
+            pass: actual.indexOf(expected) >= 0
           }
         }
       }

@@ -1,9 +1,7 @@
 
 describe("Player", function() {
 
-	var player;
+    var player;
 
-	beforeEach(function(){
-		
-	});
+    // TODO: Write tests for Player
 });

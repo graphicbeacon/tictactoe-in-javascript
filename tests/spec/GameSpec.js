@@ -9,6 +9,9 @@ describe("Game", function() {
 
 	});
 
+    afterEach(function() {
+        game = null;
+    });
 	
 	it("Initialises two players", function() {
 

@@ -7,6 +7,9 @@ describe("Cell", function() {
 		cell = new Cell(0,0);
 	});
 
+    afterEach(function(){
+        cell = null;
+    });
 
 	it("Returns the correct row and column", function(){
 		expect(cell._ROW).toEqual(0);
@@ -24,8 +27,8 @@ describe("Cell", function() {
 	it("Paints the cell and keeps it final", function(){
 		cell.paint('X');
 		cell.paint('O');
+
 		expect(cell.token).toEqual('X');
 	});
-
 
 });
